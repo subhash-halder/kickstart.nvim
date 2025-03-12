@@ -20,6 +20,7 @@ return {
     -- Installs the debug adapters for you
     'williamboman/mason.nvim',
     'jay-babu/mason-nvim-dap.nvim',
+    'theHamsta/nvim-dap-virtual-text',
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
@@ -64,8 +65,11 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'codelldb',
       },
     }
+
+    require('nvim-dap-virtual-text').setup()
 
     -- Dap UI setup
     -- For more information, see |:help nvim-dap-ui|
@@ -113,5 +117,100 @@ return {
         detached = vim.fn.has 'win32' == 0,
       },
     }
+
+    dap.adapters.lldb = {
+      type = 'server',
+      port = '${port}',
+      executable = {
+        -- CHANGE THIS to your path!
+        command = '/Users/s0h0oz1/.local/share/kickstarter/mason/bin/codelldb',
+        args = { '--port', '${port}' },
+
+        -- On windows you may have to uncomment this:
+        -- detached = false,
+      },
+    }
+    dap.configurations.rust = {
+      {
+        name = 'Launch file',
+        type = 'lldb',
+        request = 'launch',
+        program = function()
+          return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+        end,
+        cwd = '${workspaceFolder}',
+        stopOnEntry = false,
+        runInTerminal = false,
+      },
+      {
+        name = 'Launch rust router',
+        type = 'lldb',
+        request = 'launch',
+        program = function()
+          return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+        end,
+        cwd = '${workspaceFolder}',
+        env = {
+          LOG_FORMAT="pretty",
+          DISABLE_MGQL_REGISTRY="true",
+          CLUSTER_REGION="local",
+          LOCAL_ENV="true",
+          APOLLO_TELEMETRY_DISABLED="true",
+          INTROSPECTION="true",
+          MAX_PARSE_TOKENS="50000",
+          MGQL_APP_KEY="GQL-GATEWAY-US",
+          MGQL_APP_ENV="dev",
+          MGQL_SCHEMA="true",
+          PROMETHEUS_SERVER_PORT="9091",
+          RUST_BACKTRACE="1",
+          RUST_ENV="test",
+          EXPOSE_QUERY_PLAN="true",
+        },
+        args = {
+          '--supergraph',
+          './introspect-compose.graphql',
+        },
+        stopOnEntry = false,
+        runInTerminal = false,
+      },
+    }
+
+    local dapJsTable = { 'javascript', 'typescript', 'typescriptreact' }
+    local function selectPort()
+      local portList = {
+        'Search Service teflon: {9233}',
+        'Search Service Prod: {9237}',
+      }
+      local port = require('dap.ui').pick_one(portList, 'Select port: ')
+      return port:match '%d+'
+    end
+
+    for _, v in ipairs(dapJsTable) do
+      dap.configurations[v] = {
+        {
+          type = 'pwa-node',
+          request = 'launch',
+          name = 'Launch file',
+          program = '${file}',
+          cwd = '${workspaceFolder}',
+        },
+        {
+          type = 'pwa-node',
+          request = 'attach',
+          name = 'Attach',
+          processId = require('dap.utils').pick_process,
+          port = selectPort,
+          cwd = '${workspaceFolder}',
+        },
+        {
+          type = 'pwa-chrome',
+          request = 'launch',
+          name = 'Start Chrome with "localhost"',
+          url = 'http://localhost:3000',
+          webRoot = '${workspaceFolder}',
+          userDataDir = '${workspaceFolder}/.vscode/vscode-chrome-debug-userdatadir',
+        },
+      }
+    end
   end,
 }
