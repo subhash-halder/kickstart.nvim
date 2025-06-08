@@ -148,7 +148,8 @@ vim.opt.splitbelow = true
 vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 -- insert 2 spaces for a tab
-vim.opt.tabstop = 2
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
 -- convert tabs to spaces
 vim.opt.expandtab = true
 
@@ -217,6 +218,7 @@ vim.keymap.set('n', '<S-q>', '<cmd>Bdelete!<CR>', { desc = 'Delete Buffer' })
 
 vim.keymap.set('n', '<leader>gg', '<cmd>lua _LAZYGIT_TOGGLE()<CR>', { desc = '[G]it Toggle lazy git' })
 vim.keymap.set('n', '<leader>gb', '<cmd>Gitsigns blame_line<CR>', { desc = '[G]it blame line' })
+vim.keymap.set('n', '<leader>gf', '<cmd>lua require("custom.utils").git_diff_current_line()<CR>', { desc = '[G]it file history' })
 
 vim.keymap.set('n', '<leader>ee', ':NvimTreeToggle<CR>', { desc = 'Toggle NvimTree' })
 
@@ -1097,6 +1099,7 @@ require('lazy').setup({
   require 'custom.plugins.null-ls',
   require 'custom.plugins.harpoon',
   require 'custom.plugins.tailwind-tools',
+  require 'custom.plugins.avante',
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
