@@ -228,6 +228,8 @@ vim.keymap.set('x', '<leader>cc', "<esc><cmd>lua require('Comment.api').toggle.l
 vim.keymap.set('n', '<leader>cd', '<cmd>lua vim.diagnostic.open_float()<CR>', { desc = '[C]ode [D]iagnostics Floating window' })
 
 vim.keymap.set('n', '<leader>cs', '<cmd>lua require("custom.switch_case").switch_case()<CR>', { desc = '[C]ode [S]witch Case' })
+vim.keymap.set('n', '<leader>dc', '<cmd>lua require("dap").continue()<CR>', { desc = '[D]ebug [c]continue' })
+vim.keymap.set('n', '<leader>du', '<cmd>lua require("dapui").toggle()<CR>', { desc = '[D]ebug [t]oggle UI' })
 
 vim.keymap.set('v', 'p', 'P')
 -- [[ Basic Autocommands ]]
@@ -355,7 +357,7 @@ require('lazy').setup({
       -- Document existing key chains
       spec = {
         { '<leader>c', group = '[C]ode', mode = { 'n', 'x' } },
-        { '<leader>d', group = '[D]ocument' },
+        { '<leader>d', group = '[D]ebugg' },
         { '<leader>r', group = '[R]ename' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>w', group = '[W]orkspace' },
@@ -599,7 +601,7 @@ require('lazy').setup({
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
-          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+          map('<leader>cs', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
