@@ -811,6 +811,17 @@ require('lazy').setup({
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'prettierd', 'prettier', stop_after_first = true },
+        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
+        svelte = { 'prettierd', 'prettier', stop_after_first = true },
+        css = { 'prettierd', 'prettier', stop_after_first = true },
+        html = { 'prettierd', 'prettier', stop_after_first = true },
+        json = { 'prettierd', 'prettier', stop_after_first = true },
+        yaml = { 'prettierd', 'prettier', stop_after_first = true },
+        markdown = { 'prettierd', 'prettier', stop_after_first = true },
+        graphql = { 'prettierd', 'prettier', stop_after_first = true },
+        liquid = { 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
@@ -1081,7 +1092,7 @@ require('lazy').setup({
   --
   require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.lint',
   require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
   require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
@@ -1092,13 +1103,13 @@ require('lazy').setup({
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   -- { import = 'custom.plugins' },
   require 'custom.plugins.nvimtree',
-  require 'custom.plugins.copilot',
+  -- require 'custom.plugins.copilot',
   require 'custom.plugins.comment',
   require 'custom.plugins.nvim-treesitter-context',
   require 'custom.plugins.toggleterm',
   require 'custom.plugins.vim-tmux-navigator',
   require 'custom.plugins.nvim-dap-vscode-js',
-  require 'custom.plugins.null-ls',
+  -- require 'custom.plugins.null-ls',
   require 'custom.plugins.harpoon',
   require 'custom.plugins.tailwind-tools',
   require 'custom.plugins.avante',
