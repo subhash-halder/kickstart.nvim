@@ -197,6 +197,9 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 -- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
 -- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
+-- Remap <Leader>w to Ctrl-w
+vim.keymap.set('n', '<leader>w', '<C-w>')
+
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 --
@@ -534,7 +537,14 @@ require('lazy').setup({
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-      { 'j-hui/fidget.nvim', opts = {} },
+      {
+        'j-hui/fidget.nvim',
+        opts = {
+          progress = {
+            poll_rate = 10,
+          },
+        },
+      },
 
       -- Allows extra capabilities provided by nvim-cmp
       'hrsh7th/cmp-nvim-lsp',
@@ -687,11 +697,12 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
-      local mason_registery = require 'mason-registry'
-      local vue_language_server = mason_registery.get_package('vue-language-server'):get_install_path() .. '/node_modules/@vue/language-server'
+      -- vim.lsp.enable('tsgo')
+      local vue_language_server = vim.fn.exepath 'vue-language-server' .. '/node_modules/@vue/language-server'
+
       local servers = {
-        -- clangd = {},
-        gopls = {},
+        clangd = {},
+        -- gopls = {},
         -- volar = {},
         -- pyright = {},
         rust_analyzer = {
@@ -711,6 +722,8 @@ require('lazy').setup({
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
         ts_ls = {
+          cmd = { 'typescript-language-server', '--stdio' },
+          maxTsServerMemory = 8192,
           init_options = {
             plugins = {
               {
@@ -721,8 +734,14 @@ require('lazy').setup({
             },
           },
           filetypes = { 'javascript', 'javascriptreact', 'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx', 'vue' },
+          settings = {
+            ['typescript-language-server'] = {
+              tsserver = {
+                maxTsServerMemory = 8192, -- Adjust as needed
+              },
+            },
+          },
         },
-        --
 
         lua_ls = {
           -- cmd = {...},
@@ -759,6 +778,7 @@ require('lazy').setup({
       require('mason-lspconfig').setup {
         handlers = {
           function(server_name)
+            print('setting for server name' .. server_name)
             local server = servers[server_name] or {}
             -- This handles overriding only values explicitly passed
             -- by the server configuration above. Useful when disabling
@@ -769,6 +789,21 @@ require('lazy').setup({
         },
         automatic_installation = false,
       }
+
+      vim.lsp.config('ts_ls', {
+        cmd = { 'typescript-language-server', '--stdio' },
+        init_options = {
+          maxTsServerMemory = 20480,
+          plugins = {
+            {
+              name = '@vue/typescript-plugin',
+              location = vue_language_server,
+              languages = { 'vue' },
+            },
+          },
+        },
+        filetypes = { 'javascript', 'javascriptreact', 'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx', 'vue' },
+      })
     end,
   },
 
@@ -1108,11 +1143,13 @@ require('lazy').setup({
   require 'custom.plugins.nvim-treesitter-context',
   require 'custom.plugins.toggleterm',
   require 'custom.plugins.vim-tmux-navigator',
-  require 'custom.plugins.nvim-dap-vscode-js',
+  -- require 'custom.plugins.nvim-dap-vscode-js',
+  require 'custom.plugins.vscode-js-debug',
   -- require 'custom.plugins.null-ls',
   require 'custom.plugins.harpoon',
-  require 'custom.plugins.tailwind-tools',
-  require 'custom.plugins.avante',
+  require 'custom.plugins.go'
+  -- require 'custom.plugins.tilwind-tools',
+  -- require 'custom.plugins.avante',
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!

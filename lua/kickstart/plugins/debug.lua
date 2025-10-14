@@ -24,6 +24,7 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+    'jbyuki/one-small-step-for-vimkind',
   },
   keys = function(_, keys)
     local dap = require 'dap'
@@ -71,6 +72,7 @@ return {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
         'codelldb',
+        'js@v1.76.1',
       },
     }
 
@@ -135,6 +137,19 @@ return {
         -- detached = false,
       },
     }
+
+    dap.configurations.lua = {
+      {
+        type = 'nlua',
+        request = 'attach',
+        name = 'Attach to running Neovim instance',
+      },
+    }
+
+    dap.adapters.nlua = function(callback, config)
+      callback { type = 'server', host = config.host or '127.0.0.1', port = config.port or 8086 }
+    end
+
     dap.configurations.rust = {
       {
         name = 'Launch file',
@@ -156,20 +171,20 @@ return {
         end,
         cwd = '${workspaceFolder}',
         env = {
-          LOG_FORMAT="pretty",
-          DISABLE_MGQL_REGISTRY="true",
-          CLUSTER_REGION="local",
-          LOCAL_ENV="true",
-          APOLLO_TELEMETRY_DISABLED="true",
-          INTROSPECTION="true",
-          MAX_PARSE_TOKENS="50000",
-          MGQL_APP_KEY="GQL-GATEWAY-US",
-          MGQL_APP_ENV="dev",
-          MGQL_SCHEMA="true",
-          PROMETHEUS_SERVER_PORT="9091",
-          RUST_BACKTRACE="1",
-          RUST_ENV="test",
-          EXPOSE_QUERY_PLAN="true",
+          LOG_FORMAT = 'pretty',
+          DISABLE_MGQL_REGISTRY = 'true',
+          CLUSTER_REGION = 'local',
+          LOCAL_ENV = 'true',
+          APOLLO_TELEMETRY_DISABLED = 'true',
+          INTROSPECTION = 'true',
+          MAX_PARSE_TOKENS = '50000',
+          MGQL_APP_KEY = 'GQL-GATEWAY-US',
+          MGQL_APP_ENV = 'dev',
+          MGQL_SCHEMA = 'true',
+          PROMETHEUS_SERVER_PORT = '9091',
+          RUST_BACKTRACE = '1',
+          RUST_ENV = 'test',
+          EXPOSE_QUERY_PLAN = 'true',
         },
         args = {
           '--supergraph',
@@ -183,12 +198,24 @@ return {
     local dapJsTable = { 'javascript', 'typescript', 'typescriptreact' }
     local function selectPort()
       local portList = {
+        'Default port: {9229}',
         'Search Service teflon: {9233}',
         'Search Service Prod: {9237}',
       }
       local port = require('dap.ui').pick_one(portList, 'Select port: ')
       return port:match '%d+'
     end
+
+    dap.adapters['pwa-node'] = {
+      type = 'server',
+      host = 'localhost',
+      port = '${port}',
+      executable = {
+        command = 'node',
+        -- 💀 Make sure to update this path to point to your installation https://codeberg.org/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation#javascript
+        args = { '/Users/subhash/Documents/work/js-debug/src/dapDebugServer.js', '${port}' },
+      },
+    }
 
     for _, v in ipairs(dapJsTable) do
       dap.configurations[v] = {

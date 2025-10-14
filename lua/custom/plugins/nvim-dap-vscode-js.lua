@@ -4,6 +4,8 @@ local M = {
   dependencies = {
     {
       'microsoft/vscode-js-debug',
+      opt = true,
+      version = '1.76.1',
       run = 'npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out',
     },
   },
