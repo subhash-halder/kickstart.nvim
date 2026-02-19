@@ -40,12 +40,15 @@ return {
       { '<F3>', dap.step_out, desc = 'Debug: Step Out' },
       { '<leader>do', dap.step_out, desc = 'Debug: Step Out' },
       { '<leader>db', dap.toggle_breakpoint, desc = 'Debug: Toggle Breakpoint' },
+      { '<leader>dx', dap.disconnect, desc = 'Debug: Close debugger' },
+      { '<leader>dk', dapui.eval, desc = 'Debug: eval word under cursor' },
+      { '<leader>dt', dapui.toggle, desc = 'Debug: Toggle DapUI' },
       {
         '<leader>dB',
         function()
           dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
         end,
-        desc = 'Debug: Set Breakpoint',
+        desc = 'Debug: Set conditional breakpoint',
       },
       -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
       { '<F7>', dapui.toggle, desc = 'Debug: See last session result.' },
@@ -118,6 +121,16 @@ return {
 
     -- Install golang specific config
     require('dap-go').setup {
+      dap_configurations = {
+        {
+          name = 'Attach to Air (Delve)',
+          type = 'go',
+          request = 'attach',
+          mode = 'remote',
+          port = 2345,
+          host = '127.0.0.1',
+        },
+      },
       delve = {
         -- On Windows delve must be run attached or it crashes.
         -- See https://github.com/leoluz/nvim-dap-go/blob/main/README.md#configuring
@@ -126,16 +139,17 @@ return {
     }
 
     dap.adapters.lldb = {
-      type = 'server',
-      port = '${port}',
-      executable = {
-        -- CHANGE THIS to your path!
-        command = '/Users/s0h0oz1/.local/share/kickstarter/mason/bin/codelldb',
-        args = { '--port', '${port}' },
-
-        -- On windows you may have to uncomment this:
-        -- detached = false,
-      },
+      type = 'executable',
+      command = '~/.local/share/kickstarter/mason/bin/codelldb',
+      -- port = '${port}',
+      -- executable = {
+      --   -- CHANGE THIS to your path!
+      --   command = '~/.local/share/kickstarter/mason/bin/codelldb',
+      --   args = { '--port', '${port}' },
+      --
+      --   -- On windows you may have to uncomment this:
+      --   -- detached = false,
+      -- },
     }
 
     dap.configurations.lua = {

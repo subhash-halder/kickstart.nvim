@@ -173,6 +173,28 @@ vim.opt.foldlevel = 1
 
 vim.opt.showtabline = 0 -- always show tabs
 
+
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "go",
+  callback = function()
+    vim.opt_local.formatoptions:append("r")
+    vim.opt_local.formatoptions:append("o")
+  end
+})
+
+-- Enable spell check for specific file types including markdown
+local spell_types = { 'markdown', 'text', 'gitcommit' }
+
+vim.api.nvim_create_autocmd('FileType', {
+  group = vim.api.nvim_create_augroup('SpellcheckGroup', { clear = true }),
+  pattern = spell_types,
+  callback = function()
+    vim.opt_local.spell = true
+    vim.opt_local.spelllang = 'en_us' -- Set your desired language
+  end,
+})
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -827,7 +849,7 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true, javascript = true, typescript = true }
+        local disable_filetypes = { c = true, cpp = true, javascript = true, typescript = true, go = true }
         local lsp_format_opt
         if disable_filetypes[vim.bo[bufnr].filetype] then
           lsp_format_opt = 'never'
@@ -881,12 +903,12 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
       },
       'saadparwaiz1/cmp_luasnip',
@@ -1140,6 +1162,7 @@ require('lazy').setup({
   require 'custom.plugins.nvimtree',
   -- require 'custom.plugins.copilot',
   require 'custom.plugins.comment',
+  require 'custom.plugins.flash',
   require 'custom.plugins.nvim-treesitter-context',
   require 'custom.plugins.toggleterm',
   require 'custom.plugins.vim-tmux-navigator',
@@ -1147,7 +1170,7 @@ require('lazy').setup({
   require 'custom.plugins.vscode-js-debug',
   -- require 'custom.plugins.null-ls',
   require 'custom.plugins.harpoon',
-  require 'custom.plugins.go'
+  require 'custom.plugins.go',
   -- require 'custom.plugins.tilwind-tools',
   -- require 'custom.plugins.avante',
   --
