@@ -1163,6 +1163,7 @@ require('lazy').setup({
   -- require 'custom.plugins.copilot',
   require 'custom.plugins.comment',
   require 'custom.plugins.flash',
+  require 'custom.plugins.oil',
   require 'custom.plugins.nvim-treesitter-context',
   require 'custom.plugins.toggleterm',
   require 'custom.plugins.vim-tmux-navigator',

@@ -1,12 +1,14 @@
 local M = {
   "folke/flash.nvim",
   event = "VeryLazy",
-  ---@type Flash.Config
   opts = {
     modes = {
       search = {
-        enabled = false
-      }
+        enabled = true
+      },
+      -- char = {
+      --   enabled = false
+      -- }
     }
   },
   keys = {
