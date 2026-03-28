@@ -173,14 +173,12 @@ vim.opt.foldlevel = 1
 
 vim.opt.showtabline = 0 -- always show tabs
 
-
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "go",
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'go',
   callback = function()
-    vim.opt_local.formatoptions:append("r")
-    vim.opt_local.formatoptions:append("o")
-  end
+    vim.opt_local.formatoptions:append 'r'
+    vim.opt_local.formatoptions:append 'o'
+  end,
 })
 
 -- Enable spell check for specific file types including markdown
@@ -270,6 +268,10 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.highlight.on_yank()
   end,
 })
+
+-- this is the similar feature like M x compile in emac
+require 'custom.plugins.compile'
+vim.keymap.set('n', '<leader>cx', '<cmd>Compile<CR>', { desc = '[C]ompile' })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -724,7 +726,13 @@ require('lazy').setup({
 
       local servers = {
         clangd = {},
-        -- gopls = {},
+        -- gopls = {
+        --   settings = {
+        --     gopls = {
+        --       buildFlags = { '-tags=integration' },
+        --     },
+        --   },
+        -- },
         -- volar = {},
         -- pyright = {},
         rust_analyzer = {
@@ -826,6 +834,21 @@ require('lazy').setup({
         },
         filetypes = { 'javascript', 'javascriptreact', 'javascript.jsx', 'typescript', 'typescriptreact', 'typescript.tsx', 'vue' },
       })
+
+      local lspconfig = require 'lspconfig'
+      local util = require 'lspconfig/util'
+
+      lspconfig.gopls.setup {
+        cmd = { 'gopls' },
+        filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
+        root_dir = util.root_pattern('go.work', 'go.mod', '.git'),
+        settings = {
+          gopls = {
+            buildFlags = { '-tags=integration' },
+            staticcheck = true,
+          },
+        },
+      }
     end,
   },
 
