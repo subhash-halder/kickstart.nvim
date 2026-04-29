@@ -174,6 +174,15 @@ vim.opt.foldlevel = 1
 vim.opt.showtabline = 0 -- always show tabs
 
 vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'c', 'cpp' },
+  callback = function()
+    vim.opt_local.tabstop = 4
+    vim.opt_local.shiftwidth = 4
+    vim.opt_local.expandtab = true
+  end,
+})
+
+vim.api.nvim_create_autocmd('FileType', {
   pattern = 'go',
   callback = function()
     vim.opt_local.formatoptions:append 'r'
@@ -193,8 +202,17 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
+require 'custom.copy_file_path'
+require 'custom.open-commits-in-browser'
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+
+-- custom  function keymap
+vim.keymap.set('n', '<leader>yx', CopyRelativePath, { desc = 'Copy relative file path' })
+vim.keymap.set('n', '<leader>yX', CopyAbsolutePath, { desc = 'Copy absolute file path' })
+vim.keymap.set('n', 'gC', OpenCommitForCurrentLine, { desc = 'Open commit for current line' })
+vim.keymap.set('n', 'gP', OpenPRForCurrentLine, { desc = 'Open PR for current line commit' })
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
@@ -820,6 +838,10 @@ require('lazy').setup({
         automatic_installation = false,
       }
 
+      vim.lsp.config('clangd', {
+        cmd = { 'clangd', '--fallback-style=LLVM' },
+      })
+
       vim.lsp.config('ts_ls', {
         cmd = { 'typescript-language-server', '--stdio' },
         init_options = {
@@ -902,6 +924,13 @@ require('lazy').setup({
         markdown = { 'prettierd', 'prettier', stop_after_first = true },
         graphql = { 'prettierd', 'prettier', stop_after_first = true },
         liquid = { 'prettierd', 'prettier', stop_after_first = true },
+        c = { 'clang-format' },
+        cpp = { 'clang-format' },
+      },
+      formatters = {
+        ['clang-format'] = {
+          prepend_args = { '--style={BasedOnStyle: LLVM, IndentWidth: 4}' },
+        },
       },
     },
   },
